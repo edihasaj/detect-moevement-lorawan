@@ -7,7 +7,7 @@
 #define debugSerialBaud 57600                           // Define the baud rate for the debugging serial port (used for Serial monitor)
 
 bool pirValue;
-unsigned int sendEvery = 100;                            // Creates a delay so the data is not constantly sent. 
+unsigned int sendEvery = 200;                            // Creates a delay so the data is not constantly sent. 
 
 ABPCredentials credentials(DEVADDR, APPSKEY, NWKSKEY);  // Define the credential variables loaded from the keys.h file (for ABP activation method)
 LoRaModem modem(loraSerial, debugSerial, credentials);  // Define LoRa modem properties
@@ -44,6 +44,5 @@ void readSensors() {                                    // Name of our function 
 void sendSensorValues() {                               // Function used to send the data we collected from all the sensors
   payload.reset();                                      // Reset the cbor payload (in case there's anything left from the previous one)
   payload.set("17", pirValue);                          // Create a payload containing data from the PIR Sensor as bool to be sent to asset name "17" (Created PIR sensor asser on AllThingsTalk Maker)
-  payload.set("18", pirValue);                          // Create a payload containing data from the PIR Sensor as int to be sent to asset name "18" (Created PIR sensor asser on AllThingsTalk Maker)
   modem.send(payload);                                  // Send all the data above to your AllThingsTalk account
 }
