@@ -7,7 +7,8 @@
 #define debugSerialBaud 57600                           // Define the baud rate for the debugging serial port (used for Serial monitor)
 
 bool pirValue;
-unsigned int sendEvery = 200;                            // Creates a delay so the data is not constantly sent. 
+unsigned int sendEvery = 30;                            // Creates a delay so the data is not constantly sent. 
+bool isFirstTime = true;
 
 ABPCredentials credentials(DEVADDR, APPSKEY, NWKSKEY);  // Define the credential variables loaded from the keys.h file (for ABP activation method)
 LoRaModem modem(loraSerial, debugSerial, credentials);  // Define LoRa modem properties
@@ -26,19 +27,34 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   readSensors();
-  sendSensorValues();
   delay(sendEvery*1000);
 }
 
 void readSensors() {                                    // Name of our function that we'll call from the loop function below
-  pirValue  = analogRead(PIRSensPin);                   // Read the data from the PIR Sensor pin and save it into the "pirValue" variable
+  bool newPirValue  = analogRead(PIRSensPin);                   // Read the data from the PIR Sensor pin and save it into the "pirValue" variable
+  debugSerial.println("_______-----__-----");
 
-  debugSerial.println("-----------------------");
-  debugSerial.print("PIR VALUE: ");
+  debugSerial.print("OLD PIR VALUE: ");
   debugSerial.print(pirValue);
   debugSerial.println("");
   
-  delay(200);
+  debugSerial.println("-----------------------");
+  debugSerial.print("NEW PIR VALUE: ");
+  debugSerial.print(newPirValue);
+  debugSerial.println("");
+
+  if (newPirValue != pirValue) {
+    debugSerial.println("_______-----__-----");
+    debugSerial.print("SENDING PIR DATA TO REMOTE LORA");
+    debugSerial.println("_______-----__-----");
+    
+    pirValue = newPirValue;
+    sendSensorValues();
+  } else if (!newPirValue && !pirValue && isFirstTime) {
+    sendSensorValues();
+  }
+  
+ // delay(200);
 }
 
 void sendSensorValues() {                               // Function used to send the data we collected from all the sensors
