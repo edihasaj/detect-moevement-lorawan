@@ -8,7 +8,6 @@
 
 bool pirValue;
 bool previousPirValue;
-unsigned int sendEvery = 30;                            // Creates a delay so the data is not constantly sent. 
 
 ABPCredentials credentials(DEVADDR, APPSKEY, NWKSKEY);  // Define the credential variables loaded from the keys.h file (for ABP activation method)
 LoRaModem modem(loraSerial, debugSerial, credentials);  // Define LoRa modem properties
